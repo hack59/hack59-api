@@ -12,42 +12,52 @@ class RoomsClass extends Collection{
 
     }
 
-    pushSubMsg(room, msgid, submsgid){
+    voteRoom(rid, type){
 
         return new Promise(function(resolve, reject){
 
-            const index = _.findIndex(room.msg, function(item){
+            let updatequery = {};
 
-                return item._id.toString() === msgid;
+            if(type === "good"){
 
-            });
+                updatequery["$inc"] = {
 
-            if(index === -1){
+                    "push.good" : 1
 
-                reject(getError("訊息不存在", 526));
+                };
 
-            }else{
-                room.msg[index].msg.push({
+            }else if(type === "bad"){
 
-                    mid : submsgid
+                updatequery["$inc"] = {
 
-                });
+                    "push.bad" : 1
 
-                room.save(function(err){
-
-                    if(err){
-
-                        reject(getError("儲存失敗", 524));
-
-                    }else{
-
-                        resolve(room);
-
-                    }
-                });
+                };
 
             }
-        });
+            let result = this.update(
+                {_id : rid},
+                updatequery);
+
+            result.then(function(room){
+
+                if(_.isNull(room)){
+
+                    reject(getError("討論串不存在"));
+
+                }else{
+
+                    resolve(room);
+
+                }
+
+            }, function(err){
+
+                console.log(err);
+                reject(err);
+
+            });
+        }.bind(this));
     }
 
     pushGB(id, type){
@@ -134,6 +144,14 @@ const Message = new Schema({
 
     loc : {
 
+        type : {
+            type : String,
+            default : "point"
+        },
+        coordinates : [
+            {type:Number}
+        ],
+
         lng : {
             type : Number
         },
@@ -153,6 +171,22 @@ let Rooms = new RoomsClass("room", {
 
     },
 
+    push : {
+
+        good : {
+
+            type : Number,
+            default : 0
+
+        },
+        bad : {
+
+            type : Number,
+            default : 0
+
+        }
+    },
+
     content : {type : String},
 
     created_time : {
@@ -162,8 +196,16 @@ let Rooms = new RoomsClass("room", {
     msg : [Message],
 
     loc : {
+        type : {
+            type : String,
+            default : "point"
+        },
+        coordinates : [
+            {type:Number}
+        ],
 
         lng : {type : Number},
+
         lat : {type : Number}
 
     }

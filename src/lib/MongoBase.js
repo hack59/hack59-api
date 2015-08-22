@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import Promise from "bluebird";
+import { getError } from './util';
 
 export class MongoBase {
 
@@ -16,6 +17,7 @@ export default class Collection extends MongoBase{
 
     constructor(name, schema){
 
+console.log(MongoBase);
         super();
         this.model = this.db.model(name, schema);
 
@@ -59,7 +61,7 @@ export default class Collection extends MongoBase{
 
             }, function(err){
 
-                reject(err);
+                reject(getError("搜尋失敗", 525));
 
             });
         }.bind(this));
@@ -68,18 +70,45 @@ export default class Collection extends MongoBase{
 
     update(query, update){
 
-        return this.model.findOneAndUpdate(
-            query,
-            update)
-        .exec();
+        return new Promise(function(resolve, reject){
+            console.log(query);
+            this.model.findOneAndUpdate(
+                query,
+                update)
+            .exec()
+            .then(function(data){
+
+                console.log(data);
+                resolve(data);
+
+            }, function(err){
+
+                reject(getError("修改失敗", 530));
+
+            });
+        }.bind(this));
 
     }
 
-    list(query={}){
+    list(query={}, sort="-created_time"){
+        console.log(query);
+        return new Promise(function(resolve, reject){
+            this.model
+            .find(query)
+            .sort(sort)
+            .exec(function(err, data){
 
-        return this.model
-        .find(query)
-        .exec();
+                if(err){
+
+                    reject("搜尋失敗", 520);
+
+                }else{
+
+                    resolve(data);
+
+                }
+            });
+        }.bind(this));
 
     }
 }
