@@ -54,7 +54,7 @@ router.route("/search/")
 
         const limit = req.body.limit || 10;
 
-        const select = req.body.select || "_id created_time loc push";
+        const select = req.body.select || "_id title content created_time loc push";
 
         let query = {};
 
