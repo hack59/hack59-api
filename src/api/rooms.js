@@ -19,6 +19,8 @@ router.route("/search/comment/")
 
         let result = Rooms.showById(req.body._id);
 
+        let user = req._login_required;
+
         result.then(function(room){
 
             if(_.isNull(room)){
@@ -28,8 +30,34 @@ router.route("/search/comment/")
 
             }else{
 
-                let resp = _.pick(room.msg.reverse(), "_id");
-                resp.msg = _.slice(room.msg, req.body.skip, req.body.limit);
+                let resp = _.pick(room, "_id");
+
+                let tmp = room.msg.reverse();
+
+                let array = _.map(tmp, (item) => {
+                    item._doc.has_good = true;
+                    item._doc.has_bad = true;
+
+                    const good = _.find(user.good, (it) => {
+                        return item._id.toString() === it._id.toString();
+                    });
+
+                    const bad = _.find(user.bad, (it) => {
+                        return item._id.toString() === it._id.toString();
+                    });
+                    if(_.isUndefined(good)){
+                        item._doc.has_good = false;
+                    }
+
+                    if(_.isUndefined(bad)){
+
+                        item._doc.has_bad = false;
+
+                    }
+                    return item._doc;
+
+                });
+                resp.msg = _.slice(array, req.body.skip, req.body.limit);
                 req.result = resp;
                 req.message = "搜尋成功";
                 next();
@@ -164,10 +192,11 @@ router.route("/msg/vote/")
 
         let data = {};
 
-        let result = Rooms.pushGB(req.body.post_id, type);
+        let result = Rooms.pushGB(req.body._id, type);
 
         result.then(function(post){
 
+            console.log(post);
             data.post = post;
             return Users.pushGB(uid, post._id, type);
 

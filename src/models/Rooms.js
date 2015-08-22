@@ -63,6 +63,32 @@ class RoomsClass extends Collection{
         }.bind(this));
     }
 
+    pushRoomGB(id, type){
+
+        return new Promise(function(resolve, reject){
+
+            let result = this.show(id);
+
+            result.then(function(post){
+
+                post.push[type] += 1;
+
+                post.save(function(err){
+
+                    if(err){
+
+                        reject(getError("修改失敗", 533));
+
+                    }else{
+
+                        resolve(post);
+
+                    }
+                });
+            });
+        }.bind(this));
+    }
+
     pushGB(id, type){
         return new Promise(function(resolve, reject){
 
