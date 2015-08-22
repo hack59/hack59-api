@@ -84,6 +84,8 @@ router.route("/search/")
 
         const select = req.body.select || "_id title content created_time loc push";
 
+        const user = req._login_required;
+
         let query = {};
 
         if(req.body.titla){
@@ -119,7 +121,37 @@ router.route("/search/")
 
         result.then(function(rooms){
 
-            req.result = rooms;
+            let resp = _.map(rooms, (room) => {
+
+                let good,bad;
+                if(user.good.length !== 0 ){
+                    good = _.find(user.good, (item) => {
+
+                        return item.pid.toString() === room._id.toString();
+
+                    });
+                }
+
+                if(user.bad.length !== 0){
+
+                    bad = _.find(user.bad, function(it){
+
+                        return it.pid.toString() === room._id.toString();
+
+                    });
+                }
+
+                (_.isUndefined(good)) ? room._doc.has_good = true
+                                        : room._doc.has_good = false;
+
+                (_.isUndefined(bad)) ? room._doc.has_bad = true
+                                        : room._doc.has_bad = false;
+
+                return room._doc;
+
+            });
+
+            req.result = resp;
             req.message = "搜尋成功";
             next();
 
