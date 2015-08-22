@@ -1,0 +1,45 @@
+{
+  "name": "Hack59",
+  "version": "0.2.0",
+  "description": "NTU Hackethon 2015 08 21",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Tomas <horsekit1982@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "babel": "^5.8.21",
+    "bluebird": "^2.9.34",
+    "body-parser": "^1.13.3",
+    "compression": "^1.5.2",
+    "connect-multiparty": "^2.0.0",
+    "cors": "^2.7.1",
+    "express": "^4.13.3",
+    "jwt-simple": "^0.3.0",
+    "lodash": "^3.10.1",
+    "moment": "^2.10.6",
+    "mongoose": "^4.1.3",
+    "resource-router-middleware": "^0.5.1"
+  },
+  "devDependencies": {
+    "babel-core": "^5.5.6",
+    "browser-sync": "^2.2.1",
+    "del": "^1.1.1",
+    "gulp": "^3.9.0",
+    "gulp-autoprefixer": "^2.3.1",
+    "gulp-babel": "^5.2.1",
+    "gulp-cache": "^0.2.8",
+    "gulp-develop-server": "^0.4.3",
+    "gulp-eslint": "^0.13.2",
+    "gulp-if": "^1.2.5",
+    "gulp-imagemin": "^2.2.1",
+    "gulp-load-plugins": "^0.10.0",
+    "gulp-minify-css": "^1.1.1",
+    "gulp-plumber": "^1.0.1",
+    "gulp-size": "^1.2.1",
+    "gulp-sourcemaps": "^1.5.0",
+    "gulp-useref": "^1.1.1"
+  }
+}
