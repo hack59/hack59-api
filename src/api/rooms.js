@@ -28,7 +28,7 @@ router.route("/search/comment/")
 
             }else{
 
-                let resp = _.pick(room, "_id");
+                let resp = _.pick(room.msg.reverse(), "_id");
                 resp.msg = _.slice(room.msg, req.body.skip, req.body.limit);
                 req.result = resp;
                 req.message = "搜尋成功";
