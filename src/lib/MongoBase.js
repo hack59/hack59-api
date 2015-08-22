@@ -91,7 +91,7 @@ console.log(MongoBase);
     }
 
     list(query={}, sort="-created_time"){
-        console.log(query);
+
         return new Promise(function(resolve, reject){
             this.model
             .find(query)
@@ -100,7 +100,7 @@ console.log(MongoBase);
 
                 if(err){
 
-                    reject("搜尋失敗", 520);
+                    reject(getError("搜尋失敗", 520));
 
                 }else{
 

@@ -10,6 +10,10 @@ class RoomsClass extends Collection{
 
         super(name, schema);
 
+        this.schema = schema;
+
+        this.schema.index( { loc : "2dsphere" } )
+
     }
 
     voteRoom(rid, type){
@@ -114,7 +118,7 @@ const SubMessage = new Schema({
 
 });
 
-const Message = new Schema({
+let Message = new Schema({
 
     uid : {type : Schema.Types.ObjectId},
 
@@ -163,7 +167,7 @@ const Message = new Schema({
 
 });
 
-let Rooms = new RoomsClass("room", {
+let Rooms = new RoomsClass("room", new Schema({
 
     poster : {
 
@@ -210,7 +214,7 @@ let Rooms = new RoomsClass("room", {
 
     }
 
-});
+}));
 
 export default Rooms;
 

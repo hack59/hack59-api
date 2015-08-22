@@ -3,7 +3,7 @@ import moment from 'moment';
 import Promise from "bluebird";
 import LoginManager from '../lib/LoginBase';
 import { Router } from 'express';
-import { Users, Rooms, Message } from '../models';
+import { Users, Rooms} from '../models';
 import { getError } from '../lib/util';
 
 let router = Router();
@@ -18,6 +18,12 @@ router.route("/search/")
          * @params
          ***/
 
+        const sort = req.body.sort || "-created_time";
+
+        const skip = req.body.skip || 0;
+
+        const limit = req.body.limit || 10;
+
         let query = {};
 
         if(req.body.titla){
@@ -31,16 +37,35 @@ router.route("/search/")
 
         }
 
-        let result = Rooms.list(query, req.body.sort);
+        if(req.body.loc){
+
+            query.loc = {
+                    $geoWithin: {
+
+                        $geometry: {
+
+                            type : "Polygon" ,
+
+                            coordinates: req.body.loc
+
+                        }
+
+                    }
+
+                };
+        }
+
+        console.log(query);
+        let result = Rooms.list(query, sort);
 
         result.then(function(rooms){
 
-            req.result = rooms;
+            req.result = _.slice(rooms, skip, (skip + limit));
             req.message = "搜尋成功";
             next();
 
 
-        }, function(rooms){
+        }, function(err){
 
             req.error = err;
             req.message = "搜尋失敗";
@@ -228,73 +253,3 @@ router.route("/created/")
 
 export default router;
 
-//router.route("/push/submsg/")
-//    .post(LoginManager.checkPermision, function(req, res, next){
-//        /**
-//         * @params rid 留言板Id
-//         * @params _id room.msg[0]._id
-//         * @params content 留言內容
-//         * @params loc 經緯度
-//         *      @params lng : 經度
-//         *      @params lat : 緯度
-//         * **/
-//
-//        let query = _.pick(req.body
-//                , "content", "loc", "rid"),
-//            data = {};
-//
-//        query.created_time = moment().unix();
-//
-//        if(_.isEmpty(req.body._id)
-//                || _.isEmpty(query.content)){
-//
-//            req.error = getError("留言內容與房間ID不可為空", 522);
-//            next();
-//
-//        }else{
-//
-//            var result = Rooms
-//                .show({"msg._id" : req.body._id});
-//
-//            result.then(function(room){
-//                if(_.isNull(room)){
-//
-//                    req.error = getError("房間不存在", 524);
-//                    next();
-//
-//                }else{
-//
-//                    data.room = room;
-//
-//                    return Message.created(query);
-//
-//                }
-//
-//            }).then(function(message){
-//
-//                data.message = message;
-//
-//                return Rooms
-//                    .pushSubMsg(data.room, req.body._id, message._id);
-//
-//            }, function(err){
-//
-//                req.error = getError("新增訊息失敗", 524);
-//                next();
-//
-//            }).then(function(room){
-//
-//                req.result = room;
-//                next();
-//
-//            }, function(err){
-//
-//                console.log(err);
-//                req.error = err;
-//                next();
-//
-//            });
-//        }
-//
-//    });
-//

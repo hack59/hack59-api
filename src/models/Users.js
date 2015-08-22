@@ -54,7 +54,7 @@ const GBpost = new Schema({
 
 });
 
-let Users = new UsersClass("user", {
+let Users = new UsersClass("user", new Schema({
 
     created_time : {
         type : Number
@@ -77,7 +77,7 @@ let Users = new UsersClass("user", {
 
     bad : [GBpost]
 
-});
+}));
 
 export default Users;
 
