@@ -77,7 +77,6 @@ console.log(MongoBase);
             .exec()
             .then(function(data){
 
-                console.log(data);
                 resolve(data);
 
             }, function(err){

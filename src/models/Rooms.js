@@ -57,7 +57,6 @@ class RoomsClass extends Collection{
 
             }, function(err){
 
-                console.log(err);
                 reject(err);
 
             });
@@ -122,8 +121,6 @@ let Message = new Schema({
 
     uid : {type : Schema.Types.ObjectId},
 
-    title : {type : String},
-
     content : {type : String},
 
     created_time : {type : Number},
@@ -174,6 +171,8 @@ let Rooms = new RoomsClass("room", new Schema({
         uid : {type : Schema.Types.ObjectId},
 
     },
+
+    title : {type : String},
 
     push : {
 
