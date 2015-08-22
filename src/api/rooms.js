@@ -8,6 +8,36 @@ import { getError } from '../lib/util';
 
 let router = Router();
 
+router.route("/search/comment/")
+    .post(LoginManager.checkPermision, function(req, res, next){
+
+        /**
+         * @params _id room ID
+         * @params skip 第幾筆開始
+         * @params limit 總更回傳幾筆
+         * **/
+
+        let result = Rooms.showById(req.body._id);
+
+        result.then(function(room){
+
+            if(_.isNull(room)){
+
+                req.error = getError("找不到資料", 522);
+                next();
+
+            }else{
+
+                let resp = _.pick(room, "_id");
+                resp.msg = _.slice(room.msg, req.body.skip, req.body.limit);
+                req.result = resp;
+                req.message = "搜尋成功";
+                next();
+
+            }
+        });
+    });
+
 router.route("/search/")
     .post(LoginManager.checkPermision, function(req, res, next){
 
@@ -15,7 +45,7 @@ router.route("/search/")
          * @params skip 起始資料
          * @params limit 回傳幾筆
          * @params sort 排序
-         * @params
+         * @params select 回傳的欄位
          ***/
 
         const sort = req.body.sort || "-created_time";
@@ -23,6 +53,8 @@ router.route("/search/")
         const skip = req.body.skip || 0;
 
         const limit = req.body.limit || 10;
+
+        const select = req.body.select || "_id created_time loc push";
 
         let query = {};
 
@@ -55,12 +87,11 @@ router.route("/search/")
                 };
         }
 
-        console.log(query);
-        let result = Rooms.list(query, sort);
+        let result = Rooms.list(query, sort, select, skip, limit);
 
         result.then(function(rooms){
 
-            req.result = _.slice(rooms, skip, (skip + limit));
+            req.result = rooms;
             req.message = "搜尋成功";
             next();
 

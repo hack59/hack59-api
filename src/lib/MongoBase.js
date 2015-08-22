@@ -71,7 +71,6 @@ console.log(MongoBase);
     update(query, update){
 
         return new Promise(function(resolve, reject){
-            console.log(query);
             this.model.findOneAndUpdate(
                 query,
                 update)
@@ -90,11 +89,14 @@ console.log(MongoBase);
 
     }
 
-    list(query={}, sort="-created_time"){
+    list(query={}, sort="-created_time", select="_id created_time", skip=0, limit=10){
 
         return new Promise(function(resolve, reject){
             this.model
             .find(query)
+            .skip(skip)
+            .limit(limit)
+            .select(select)
             .sort(sort)
             .exec(function(err, data){
 
